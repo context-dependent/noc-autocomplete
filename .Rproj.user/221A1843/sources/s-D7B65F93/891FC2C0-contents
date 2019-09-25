@@ -5,10 +5,11 @@ noc_finder_page <- read_html("https://www.canada.ca/en/immigration-refugees-citi
 
 table_node <- html_node(noc_finder_page, "#noc")
 
-noc_table <- html_table(table_node) %>% as_tibble()
+noc_table <- html_table(table_node) %>% as_tibble() %>% janitor::clean_names()
+
+noc_table %>% write_csv("noc-autocomplete-keyword-table.csv")
 
 noc_list <- noc_table %>% 
-  janitor::clean_names() %>%
   mutate(label = str_c(noc, " - ", title)) %>% 
   rename(value = keywords) %>% 
   select(-noc, -title, -skill_level_or_type) %>% 
